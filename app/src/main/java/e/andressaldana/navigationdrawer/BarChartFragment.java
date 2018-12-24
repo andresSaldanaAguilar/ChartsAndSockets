@@ -7,11 +7,18 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
@@ -36,6 +43,11 @@ public class BarChartFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    //data for the chart
+    ArrayList <BarEntry> data;
+    ArrayList<String> labels;
+
 
     public BarChartFragment() {
         // Required empty public constructor
@@ -71,40 +83,46 @@ public class BarChartFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_bar_chart, container, false);
+
+        //spinner setup
+        Spinner spinner = (Spinner) view.findViewById(R.id.spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.getContext(),
+        R.array.bar_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                //Fragment fragment = new BarChartFragment();
+                //beginTransaction().replace(R.id.content_main,fragment).commit();
+                Toast.makeText(parentView.getContext(),"Item seleccionado: "+id,Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+
+        });
+
+        //bar chart setup
         BarChart chart = view.findViewById(R.id.barChart);
+        chart.getDescription().setEnabled(false);
+        BarDataSet bardataset = new BarDataSet(data, "Voltage usage on KWHr");
 
-        ArrayList NoOfEmp = new ArrayList();
-
-        NoOfEmp.add(new BarEntry(945f, 0));
-        NoOfEmp.add(new BarEntry(1040f, 1));
-        NoOfEmp.add(new BarEntry(1133f, 2));
-        NoOfEmp.add(new BarEntry(1240f, 3));
-        NoOfEmp.add(new BarEntry(1369f, 4));
-        NoOfEmp.add(new BarEntry(1487f, 5));
-        NoOfEmp.add(new BarEntry(1501f, 6));
-        NoOfEmp.add(new BarEntry(1645f, 7));
-        NoOfEmp.add(new BarEntry(1578f, 8));
-        NoOfEmp.add(new BarEntry(1695f, 9));
-
-        ArrayList year = new ArrayList();
-
-        year.add("2008");
-        year.add("2009");
-        year.add("2010");
-        year.add("2011");
-        year.add("2012");
-        year.add("2013");
-        year.add("2014");
-        year.add("2015");
-        year.add("2016");
-        year.add("2017");
-
-        BarDataSet bardataset = new BarDataSet(NoOfEmp, "No Of Employee");
-        chart.animateY(5000);
-        BarData data = new BarData(year, bardataset);
-        bardataset.setColors(ColorTemplate.COLORFUL_COLORS);
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setValueFormatter(new IAxisValueFormatter(){
+        @Override
+        public String getFormattedValue(float value, AxisBase axis) {
+            return labels.get((int) value);
+        }
+        });
+        chart.animateXY(2000,2000);
+        BarData data = new BarData(bardataset);
+        bardataset.setColors(ColorTemplate.MATERIAL_COLORS);
         chart.setData(data);
-        //end chart
+
         return view;
     }
 
@@ -130,6 +148,19 @@ public class BarChartFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    //this method sets the bar data
+    public void setChartData(ArrayList<String> al){
+        this.data = new ArrayList();
+        for(int i = 0; i < al.size(); i++){
+            data.add(new BarEntry((float)i,Float.parseFloat(al.get(i))));
+        }
+    }
+
+    //this method sets the labels on x axis
+    public void setChartLabels(ArrayList<String> labels){
+        this.labels = labels;
     }
 
     /**

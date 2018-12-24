@@ -15,6 +15,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.github.mikephil.charting.data.BarEntry;
+
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, FragmentGeneralInfo.OnFragmentInteractionListener, BarChartFragment.OnFragmentInteractionListener{
 
@@ -24,15 +28,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -90,7 +85,30 @@ public class MainActivity extends AppCompatActivity
             isFramgentSelected = true;
         } else if (id == R.id.nav_gallery) {
             fragment = new BarChartFragment();
+            ArrayList NoOfEmp = new ArrayList();
+
+            NoOfEmp.add("945");
+            NoOfEmp.add("1040");
+            NoOfEmp.add("1133");
+            NoOfEmp.add("1240");
+            NoOfEmp.add("780");
+            NoOfEmp.add("487");
+
+
+            ((BarChartFragment) fragment).setChartData(NoOfEmp);
+
+            final ArrayList<String> xLabels = new ArrayList<>();
+            xLabels.add("January");
+            xLabels.add("February");
+            xLabels.add("March");
+            xLabels.add("April");
+            xLabels.add("May");
+            xLabels.add("June");
+
+            ((BarChartFragment) fragment).setChartLabels(xLabels);
+
             isFramgentSelected = true;
+
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
