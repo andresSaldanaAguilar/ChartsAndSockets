@@ -44,9 +44,10 @@ public class BarChartFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    //data for the chart
+    //chart
     ArrayList <BarEntry> data;
     ArrayList<String> labels;
+    BarChart chart;
 
 
     public BarChartFragment() {
@@ -84,8 +85,25 @@ public class BarChartFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_bar_chart, container, false);
 
+        //bar chart setup
+        chart = view.findViewById(R.id.barChart);
+        chart.getDescription().setEnabled(false);
+        BarDataSet bardataset = new BarDataSet(data, "Voltage usage on KWHr");
+
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setValueFormatter(new IAxisValueFormatter(){
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                return labels.get((int) value);
+            }
+        });
+        chart.animateXY(2000,2000);
+        BarData bardata = new BarData(bardataset);
+        bardataset.setColors(ColorTemplate.MATERIAL_COLORS);
+        chart.setData(bardata);
+
         //spinner setup
-        Spinner spinner = (Spinner) view.findViewById(R.id.spinner);
+        Spinner spinner = (Spinner) view.findViewById(R.id.general_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.getContext(),
         R.array.bar_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -94,9 +112,71 @@ public class BarChartFragment extends Fragment {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                //Fragment fragment = new BarChartFragment();
-                //beginTransaction().replace(R.id.content_main,fragment).commit();
-                Toast.makeText(parentView.getContext(),"Item seleccionado: "+id,Toast.LENGTH_SHORT).show();
+                Fragment fragment = new BarChartFragment();
+
+                ArrayList NoOfEmp = new ArrayList();
+                final ArrayList<String> xLabels = new ArrayList<>();
+
+                if(id == 0){
+                    xLabels.add("Jan");
+                    xLabels.add("Feb");
+                    xLabels.add("Mar");
+                    xLabels.add("Apr");
+                    xLabels.add("May");
+                    xLabels.add("Jun");
+                    xLabels.add("Jul");
+                    xLabels.add("Aug");
+                    xLabels.add("Sep");
+                    xLabels.add("Oct");
+                    xLabels.add("Nov");
+                    xLabels.add("Dec");
+                    NoOfEmp.add("545");
+                    NoOfEmp.add("640");
+                    NoOfEmp.add("330");
+                    NoOfEmp.add("240");
+                    NoOfEmp.add("680");
+                    NoOfEmp.add("787");
+                    NoOfEmp.add("487");
+                    NoOfEmp.add("187");
+                    NoOfEmp.add("287");
+                    NoOfEmp.add("487");
+                    NoOfEmp.add("387");
+                    NoOfEmp.add("687");
+                }
+                else if(id == 1){
+                    xLabels.add("Mon");
+                    xLabels.add("Tue");
+                    xLabels.add("Wed");
+                    xLabels.add("Thu");
+                    xLabels.add("Fri");
+                    xLabels.add("Sat");
+                    xLabels.add("Sun");
+                    NoOfEmp.add("145");
+                    NoOfEmp.add("140");
+                    NoOfEmp.add("133");
+                    NoOfEmp.add("140");
+                    NoOfEmp.add("70");
+                    NoOfEmp.add("47");
+                    NoOfEmp.add("79");
+                }
+
+                unsetChartData();
+                setChartData(NoOfEmp);
+                setChartLabels(xLabels);
+
+                BarDataSet bardataset = new BarDataSet(data, "Voltage usage on KWHr");
+
+                XAxis xAxis = chart.getXAxis();
+                xAxis.setValueFormatter(new IAxisValueFormatter(){
+                    @Override
+                    public String getFormattedValue(float value, AxisBase axis) {
+                        return labels.get((int) value);
+                    }
+                });
+                chart.animateXY(2000,2000);
+                BarData bardata = new BarData(bardataset);
+                bardataset.setColors(ColorTemplate.MATERIAL_COLORS);
+                chart.setData(bardata);
             }
 
             @Override
@@ -105,23 +185,6 @@ public class BarChartFragment extends Fragment {
             }
 
         });
-
-        //bar chart setup
-        BarChart chart = view.findViewById(R.id.barChart);
-        chart.getDescription().setEnabled(false);
-        BarDataSet bardataset = new BarDataSet(data, "Voltage usage on KWHr");
-
-        XAxis xAxis = chart.getXAxis();
-        xAxis.setValueFormatter(new IAxisValueFormatter(){
-        @Override
-        public String getFormattedValue(float value, AxisBase axis) {
-            return labels.get((int) value);
-        }
-        });
-        chart.animateXY(2000,2000);
-        BarData data = new BarData(bardataset);
-        bardataset.setColors(ColorTemplate.MATERIAL_COLORS);
-        chart.setData(data);
 
         return view;
     }
@@ -155,6 +218,13 @@ public class BarChartFragment extends Fragment {
         this.data = new ArrayList();
         for(int i = 0; i < al.size(); i++){
             data.add(new BarEntry((float)i,Float.parseFloat(al.get(i))));
+        }
+    }
+
+    //this method unsets the bar data
+    public void unsetChartData(){
+        for(int i = 0; i < data.size(); i++){
+            data.remove(i);
         }
     }
 

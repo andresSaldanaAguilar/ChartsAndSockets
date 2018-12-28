@@ -7,7 +7,7 @@
     tools:context=".BarChartFragment"
     tools:background="@android:color/background_light">
         <Spinner
-            android:id="@+id/spinner"
+            android:id="@+id/general_spinner"
             android:layout_width="match_parent"
             android:layout_height="60dp" />
         <com.github.mikephil.charting.charts.BarChart

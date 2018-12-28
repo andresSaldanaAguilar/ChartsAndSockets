@@ -20,7 +20,7 @@ import com.github.mikephil.charting.data.BarEntry;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, FragmentGeneralInfo.OnFragmentInteractionListener, BarChartFragment.OnFragmentInteractionListener{
+        implements NavigationView.OnNavigationItemSelectedListener, RealTimeFragment.OnFragmentInteractionListener, BarChartFragment.OnFragmentInteractionListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,37 +80,48 @@ public class MainActivity extends AppCompatActivity
         Fragment fragment = null;
         boolean isFramgentSelected = false;
 
-        if (id == R.id.nav_camera) {
-            fragment = new FragmentGeneralInfo();
-            isFramgentSelected = true;
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_home) {
+            //fragment = new FragmentGeneralInfo();
+            //isFramgentSelected = true;
+
+        } else if (id == R.id.nav_statistics) {
+
             fragment = new BarChartFragment();
             ArrayList NoOfEmp = new ArrayList();
-
-            NoOfEmp.add("945");
-            NoOfEmp.add("1040");
-            NoOfEmp.add("1133");
-            NoOfEmp.add("1240");
-            NoOfEmp.add("780");
-            NoOfEmp.add("487");
-
-
-            ((BarChartFragment) fragment).setChartData(NoOfEmp);
-
             final ArrayList<String> xLabels = new ArrayList<>();
-            xLabels.add("January");
-            xLabels.add("February");
-            xLabels.add("March");
-            xLabels.add("April");
+            xLabels.add("Jan");
+            xLabels.add("Feb");
+            xLabels.add("Mar");
+            xLabels.add("Apr");
             xLabels.add("May");
-            xLabels.add("June");
+            xLabels.add("Jun");
+            xLabels.add("Jul");
+            xLabels.add("Aug");
+            xLabels.add("Sep");
+            xLabels.add("Oct");
+            xLabels.add("Nov");
+            xLabels.add("Dec");
+            NoOfEmp.add("545");
+            NoOfEmp.add("640");
+            NoOfEmp.add("330");
+            NoOfEmp.add("240");
+            NoOfEmp.add("680");
+            NoOfEmp.add("787");
+            NoOfEmp.add("487");
+            NoOfEmp.add("187");
+            NoOfEmp.add("287");
+            NoOfEmp.add("487");
+            NoOfEmp.add("387");
+            NoOfEmp.add("687");
 
             ((BarChartFragment) fragment).setChartLabels(xLabels);
+            ((BarChartFragment) fragment).setChartData(NoOfEmp);
 
             isFramgentSelected = true;
 
-        } else if (id == R.id.nav_manage) {
-
+        } else if (id == R.id.nav_real_time) {
+            fragment = new RealTimeFragment();
+            isFramgentSelected = true;
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {

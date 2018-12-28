@@ -1,7 +1,6 @@
 package e.andressaldana.navigationdrawer;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,40 +8,42 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
-
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link FragmentGeneralInfo.OnFragmentInteractionListener} interface
+ * {@link RealTimeFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link FragmentGeneralInfo#newInstance} factory method to
+ * Use the {@link RealTimeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FragmentGeneralInfo extends Fragment {
+public class RealTimeFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    //Charts
-
-
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
+    //chart
+    LineChart chart;
+
     private OnFragmentInteractionListener mListener;
 
-    public FragmentGeneralInfo() {
+    public RealTimeFragment() {
         // Required empty public constructor
     }
 
@@ -52,11 +53,11 @@ public class FragmentGeneralInfo extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment FragmentGeneralInfo.
+     * @return A new instance of fragment RealTimeFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static FragmentGeneralInfo newInstance(String param1, String param2) {
-        FragmentGeneralInfo fragment = new FragmentGeneralInfo();
+    public static RealTimeFragment newInstance(String param1, String param2) {
+        RealTimeFragment fragment = new RealTimeFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -71,28 +72,63 @@ public class FragmentGeneralInfo extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
-
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view =  inflater.inflate(R.layout.fragment_real_time, container, false);
+        chart = view.findViewById(R.id.realTimeChart);
 
-        //Chart
-        View view =  inflater.inflate(R.layout.fragment_fragment_general_info, container, false);
-        PieChart pieChart =  (PieChart)view.findViewById(R.id.chart);
+        LineDataSet lineDataSet = new LineDataSet(getDataSet(),"My line chart");
+        lineDataSet.setDrawFilled(true);
+        lineDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+        LineData lineData= new LineData(lineDataSet);
+        lineData.setValueFormatter(new ReportChartXAxisValueFormatter(getXAxisValues()));
 
-        ArrayList<Entry> entries = new ArrayList<>();
-        entries.add(new Entry(4f, 0));
-        entries.add(new Entry(8f, 1));
-        entries.add(new Entry(6f, 2));
-        entries.add(new Entry(12f, 3));
-        entries.add(new Entry(18f, 4));
-        entries.add(new Entry(9f, 5));
-
-
-        //end chart
+        chart.setData(lineData);
+        chart.animateXY(2000,2000);
+        chart.invalidate();
         return view;
+    }
+
+    private List<Entry> getDataSet(){
+        List<Entry> entries = new ArrayList();
+        entries.add(new Entry(1,0));
+        entries.add(new Entry(3,1));
+        entries.add(new Entry(5,2));
+        entries.add(new Entry(8,3));
+        entries.add(new Entry(9,4));
+        return entries;
+    }
+
+    private List<String> getXAxisValues(){
+        List<String> xAxis = new ArrayList();
+        xAxis.add("Jan");
+        xAxis.add("Feb");
+        xAxis.add("Mar");
+        xAxis.add("Apr");
+        xAxis.add("May");
+        return xAxis;
+    }
+
+    private class ReportChartXAxisValueFormatter implements IValueFormatter {
+
+        private List<String> labels;
+
+        public ReportChartXAxisValueFormatter(List<String> labels){
+            this.labels = labels;
+        }
+
+        @Override
+        public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+            try {
+                int index = (int) value;
+                return  this.labels.get(index);
+            }catch (Exception e){
+                return null;
+            }
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
